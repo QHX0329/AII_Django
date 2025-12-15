@@ -3,13 +3,12 @@
 {% block content %}
 <div class="uk-text-center uk-margin-large-top">
     <h1 class="uk-heading-medium">Bienvenido al Sistema de Recomendación</h1>
-    <p class="uk-text-lead">Práctica basada en el Anime Dataset (CSV/TXT)</p>
     
-    <div class="uk-grid-match uk-child-width-1-3@m uk-margin-medium-top" uk-grid>
+    <div class="uk-grid-match uk-child-width-1-4@m uk-margin-medium-top" uk-grid>
         <div>
             <div class="uk-card uk-card-default uk-card-hover uk-card-body">
                 <h3 class="uk-card-title">1. Cargar Datos</h3>
-                <p>Inicializa la base de datos SQL y el sistema de recomendación.</p>
+                <p>Inicializa la base de datos y el sistema de recomendación.</p>
                 <a href="/carga" class="uk-button uk-button-primary">Ir a Carga</a>
             </div>
         </div>
@@ -22,7 +21,14 @@
         </div>
         <div>
             <div class="uk-card uk-card-default uk-card-hover uk-card-body">
-                <h3 class="uk-card-title">3. Recomendar</h3>
+                <h3 class="uk-card-title">3. Populares</h3>
+                <p>Busca los animes con más puntuaciones y sus similares</p>
+                <a href="/animes_populares" class="uk-button uk-button-secondary">Explorar</a>
+            </div>
+        </div>
+        <div>
+            <div class="uk-card uk-card-default uk-card-hover uk-card-body">
+                <h3 class="uk-card-title">4. Recomendar</h3>
                 <p>Descubre usuarios afines o animes similares.</p>
                 <a href="/recomendar_usuarios" class="uk-button uk-button-danger">Recomendar</a>
             </div>

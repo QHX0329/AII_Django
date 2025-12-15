@@ -21,7 +21,7 @@ def carga(request):
 
 def load_rs(request):
     load_dict()
-    return render(request, 'load_rs.html', {'mensaje': "Datos del Sistema de Recomendación cargados correctamente en shelve."})
+    return render(request, 'load_rs.html', {'mensaje': "Datos del Sistema de Recomendación cargados correctamente."})
 
 def animes_por_formato(request):
     animes = None
