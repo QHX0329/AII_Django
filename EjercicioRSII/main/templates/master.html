@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Sistema de Recomendación Musical{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/css/uikit.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit-icons.min.js"></script>
+</head>
+<body>
+    <nav class="uk-navbar-container" uk-navbar>
+        <div class="uk-navbar-left">
+            <ul class="uk-navbar-nav">
+                <li class="uk-active"><a href="/">Inicio</a></li>
+                <li><a href="/carga">Cargar BD</a></li>
+                <li>
+                    <a href="#">Funcionalidades</a>
+                    <div class="uk-navbar-dropdown">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            <li><a href="/artistas_mas_escuchados">Artistas más escuchados</a></li>
+                            <li><a href="/etiquetas_artista">Etiquetas de Artista</a></li>
+                            <li><a href="/recomendacion_usuarios">Recomendar Artistas</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="uk-container uk-margin-top">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer class="uk-text-center uk-margin-large-top uk-padding-small uk-background-muted">
+        <p>Sistema de Recomendación - EjercicioRSII</p>
+    </footer>
+</body>
+</html>

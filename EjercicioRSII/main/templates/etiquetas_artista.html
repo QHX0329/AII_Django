@@ -1,0 +1,51 @@
+{% extends 'master.html' %}
+
+{% block content %}
+<h2>Etiquetas más frecuentes de un Artista</h2>
+
+<form method="post" class="uk-form-horizontal uk-margin-large">
+    {% csrf_token %}
+    <div class="uk-margin">
+        <label class="uk-form-label">{{ formulario.idArtista.label }}</label>
+        <div class="uk-form-controls">
+            {{ formulario.idArtista }}
+        </div>
+        <div class="uk-text-danger">
+            {{ formulario.idArtista.errors }}
+        </div>
+    </div>
+    <button type="submit" class="uk-button uk-button-primary">Buscar</button>
+</form>
+
+{% if etiquetas %}
+    <hr>
+    <h3>Etiquetas para: <span class="uk-text-primary">{{ artista.nombre }}</span></h3>
+    
+    <div class="uk-grid-small uk-child-width-auto" uk-grid>
+        {% for tag in etiquetas %}
+        <div>
+            <span class="uk-label uk-label-success" style="padding: 10px; font-size: 1rem;">
+                {{ tag.idTag__tagValue }} <span class="uk-badge uk-margin-small-left">{{ tag.frecuencia }}</span>
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <table class="uk-table uk-table-small uk-table-divider uk-margin-top">
+        <thead>
+            <tr>
+                <th>Etiqueta</th>
+                <th>Frecuencia</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tag in etiquetas %}
+            <tr>
+                <td>{{ tag.idTag__tagValue }}</td>
+                <td>{{ tag.frecuencia }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}

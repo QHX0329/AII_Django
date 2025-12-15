@@ -1,0 +1,44 @@
+{% extends 'master.html' %}
+
+{% block content %}
+<h2>Artistas más escuchados por Usuario</h2>
+
+<form method="post" class="uk-form-horizontal uk-margin-large">
+    {% csrf_token %}
+    <div class="uk-margin">
+        <label class="uk-form-label" for="form-horizontal-text">{{ formulario.idUsuario.label }}</label>
+        <div class="uk-form-controls">
+            {{ formulario.idUsuario }}
+            </div>
+        <div class="uk-text-danger">
+            {{ formulario.idUsuario.errors }}
+        </div>
+    </div>
+    <button type="submit" class="uk-button uk-button-primary">Buscar</button>
+</form>
+
+{% if artistas %}
+    <hr>
+    <h3>Resultados para el usuario: <span class="uk-text-primary">{{ usuario.idUsuario }}</span></h3>
+    <table class="uk-table uk-table-striped uk-table-hover">
+        <thead>
+            <tr>
+                <th>ID Artista</th>
+                <th>Nombre</th>
+                <th>Tiempo de Escucha</th>
+                <th>URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ua in artistas %}
+            <tr>
+                <td>{{ ua.idArtista.idArtista }}</td>
+                <td>{{ ua.idArtista.nombre }}</td>
+                <td>{{ ua.tiempoEscucha }}</td>
+                <td><a href="{{ ua.idArtista.url }}" target="_blank">Enlace</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}

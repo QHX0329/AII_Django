@@ -1,0 +1,32 @@
+{% extends 'master.html' %}
+
+{% block content %}
+<div class="uk-text-center uk-margin-medium-top">
+    <h1 class="uk-heading-medium">Bienvenido al Sistema de Recomendación Musical</h1>
+    <p class="uk-text-lead">Ejercicio basado en el dataset Last.FM</p>
+    
+    <div class="uk-grid-match uk-child-width-1-3@m uk-margin-large-top" uk-grid>
+        <div>
+            <div class="uk-card uk-card-default uk-card-hover uk-card-body">
+                <h3 class="uk-card-title">Cargar Datos</h3>
+                <p>Inicializa la base de datos con los ficheros del sistema.</p>
+                <a href="/carga" class="uk-button uk-button-primary">Ir a Carga</a>
+            </div>
+        </div>
+        <div>
+            <div class="uk-card uk-card-default uk-card-hover uk-card-body">
+                <h3 class="uk-card-title">Consultas</h3>
+                <p>Consulta artistas populares y etiquetas.</p>
+                <a href="/artistas_mas_escuchados" class="uk-button uk-button-secondary">Consultar</a>
+            </div>
+        </div>
+        <div>
+            <div class="uk-card uk-card-default uk-card-hover uk-card-body">
+                <h3 class="uk-card-title">Recomendaciones</h3>
+                <p>Obtén recomendaciones personalizadas basadas en contenido.</p>
+                <a href="/recomendacion_usuarios" class="uk-button uk-button-danger">Recomendar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

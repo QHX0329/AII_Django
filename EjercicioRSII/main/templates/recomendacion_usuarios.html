@@ -1,0 +1,48 @@
+{% extends 'master.html' %}
+
+{% block content %}
+<h2>Recomendación de Artistas (Basado en Contenido)</h2>
+<p class="uk-text-meta">Se comparan las etiquetas de los artistas más escuchados por el usuario con las etiquetas de otros artistas usando el coeficiente de Dice.</p>
+
+<form method="post" class="uk-form-horizontal uk-margin-large">
+    {% csrf_token %}
+    <div class="uk-margin">
+        <label class="uk-form-label">{{ formulario.idUsuario.label }}</label>
+        <div class="uk-form-controls">
+            {{ formulario.idUsuario }}
+        </div>
+        <div class="uk-text-danger">
+            {{ formulario.idUsuario.errors }}
+        </div>
+    </div>
+    <button type="submit" class="uk-button uk-button-danger">Obtener Recomendaciones</button>
+</form>
+
+{% if recomendaciones %}
+    <hr>
+    <h3>Artistas recomendados</h3>
+    <table class="uk-table uk-table-striped uk-table-hover">
+        <thead>
+            <tr>
+                <th>Ranking</th>
+                <th>Similitud (Dice)</th>
+                <th>Artista</th>
+                <th>Enlace</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sim, artista in recomendaciones %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ sim|floatformat:4 }}</td> <td>{{ artista.nombre }}</td>
+                <td><a href="{{ artista.url }}" target="_blank">Ver en Last.fm</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% elif request.method == 'POST' and not recomendaciones %}
+    <div class="uk-alert-warning" uk-alert>
+        <p>No se encontraron recomendaciones suficientes o el usuario no tiene historial.</p>
+    </div>
+{% endif %}
+{% endblock %}
