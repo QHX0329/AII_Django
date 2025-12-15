@@ -122,6 +122,12 @@ def recomendar_usuarios(request):
                 # Al ser la matriz invertida, esto nos "recomienda" usuarios que encajan con este anime
                 rankings = getRecommendations(ItemsPrefs, int(id_anime))
                 
+                # --- AÑADE ESTO PARA DEPURAR ---
+                print(f"Total predicciones: {len(rankings)}")
+                print(f"Top 5: {rankings[:5]}")
+                print(f"Predicciones del puesto 50 al 55: {rankings[50:55]}") # Mira más abajo
+                # -------------------------------
+                
                 # Cogemos los 5 mejores
                 top_5 = rankings[:5]
                 recomendaciones = top_5 # Lista de tuplas (score, idUsuario)
