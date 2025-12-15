@@ -1,4 +1,3 @@
-# main/populate.py
 import csv
 import os
 from main.models import Anime, Puntuacion
@@ -20,13 +19,12 @@ def delete_tables():
 
 def populate_animes():
     print("Eliminando datos anteriores de Animes y Puntuaciones...")
-    # Borramos en orden inverso para no romper claves foráneas
     Puntuacion.objects.all().delete()
     Anime.objects.all().delete()
     
     print("Cargando animes...")
     lista_animes = []
-    dict_animes = {} # Diccionario {id_original: objeto_anime}
+    dict_animes = {}
     
     ruta_fichero = os.path.join(path, FICH_ANIME)
     
@@ -35,13 +33,11 @@ def populate_animes():
         return {}
 
     with open(ruta_fichero, encoding='utf-8', errors='ignore') as f:
-        # IMPORTANTE: Tus archivos usan ';' como separador
         reader = csv.reader(f, delimiter=';') 
         
-        next(reader) # Saltamos la cabecera (anime_id;name;genre;type;episodes...)
+        next(reader)
         
         for row in reader:
-            # Si la línea está incompleta, la saltamos
             if len(row) < 5: continue 
             
             try:
@@ -50,7 +46,6 @@ def populate_animes():
                 generos = row[2]
                 formato = row[3]
                 
-                # Tratamiento de episodios "Unknown" o vacíos
                 episodios_str = row[4].strip()
                 if episodios_str.isdigit():
                     episodios = int(episodios_str)
@@ -68,10 +63,8 @@ def populate_animes():
                 lista_animes.append(obj_anime)
                 dict_animes[aid] = obj_anime
             except ValueError:
-                # Si falla el parseo de algún ID, saltamos la línea
                 continue
 
-    # Insertamos todos de golpe (Bulk Create)
     Anime.objects.bulk_create(lista_animes)
     print(f"Animes insertados: {len(lista_animes)}")
     
@@ -89,7 +82,7 @@ def populate_ratings(dict_animes):
 
     with open(ruta_fichero, encoding='utf-8') as f:
         reader = csv.reader(f, delimiter=';') 
-        next(reader) # Saltar cabecera (user_id;anime_id;rating)
+        next(reader)
         
         count = 0
         for row in reader:
@@ -102,23 +95,20 @@ def populate_ratings(dict_animes):
             except ValueError:
                 continue 
             
-            # Solo cargamos si el rating es positivo y el anime existe
             if rating > 0 and aid in dict_animes:
                 obj_puntuacion = Puntuacion(
                     id_usuario=uid,
-                    anime=dict_animes[aid], # Enlazamos con el objeto en memoria
+                    anime=dict_animes[aid],
                     puntuacion=rating
                 )
                 lista_puntuaciones.append(obj_puntuacion)
                 count += 1
                 
-            # Insertar en lotes de 50.000 para no saturar la memoria
             if len(lista_puntuaciones) >= 50000:
                 Puntuacion.objects.bulk_create(lista_puntuaciones)
                 lista_puntuaciones = []
                 print(f"Procesadas {count} puntuaciones...")
 
-    # Insertar los restantes
     if lista_puntuaciones:
         Puntuacion.objects.bulk_create(lista_puntuaciones)
     

@@ -1,4 +1,3 @@
-# main/views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count
 from main.models import Anime, Puntuacion
@@ -10,24 +9,20 @@ import shelve
 def index(request):
     return render(request, 'index.html')
 
-# a) Cargar BD
 def carga(request):
     if request.method == 'POST':
         if 'confirmar' in request.POST:
             populate_database()
-            # Datos informativos post-carga
             num_animes = Anime.objects.count()
             num_puntuaciones = Puntuacion.objects.count()
             mensaje = f"Carga finalizada. Animes: {num_animes}, Puntuaciones: {num_puntuaciones}"
             return render(request, 'carga.html', {'mensaje': mensaje})
     return render(request, 'carga.html', {'form': CargaForm()})
 
-# b) Cargar RecSys
 def load_rs(request):
     load_dict()
     return render(request, 'load_rs.html', {'mensaje': "Datos del Sistema de Recomendación cargados correctamente en shelve."})
 
-# c) Animes por formato
 def animes_por_formato(request):
     animes = None
     form = FormatoEmisionForm()
@@ -36,31 +31,25 @@ def animes_por_formato(request):
         form = FormatoEmisionForm(request.POST)
         if form.is_valid():
             formato = form.cleaned_data['formato']
-            # Filtrar y ordenar por número de episodios descendente
             animes = Anime.objects.filter(formato_emision=formato).order_by('-num_episodios')
             
     return render(request, 'animes_por_formato.html', {'form': form, 'animes': animes})
 
-# d) Animes más populares y similares
 def animes_populares(request):
-    # Top 3 animes por número de puntuaciones
     top_animes_data = Puntuacion.objects.values('anime').annotate(num_votos=Count('anime')).order_by('-num_votos')[:3]
     
     resultados = []
     
-    # Abrimos shelve para calcular similitudes
     shelf = shelve.open("dataRS.dat")
     prefs = shelf.get('prefs', {})
     shelf.close()
     
-    # Invertimos prefs para tener {item: {user: rating}}
     item_prefs = transformPrefs(prefs)
     
     for item in top_animes_data:
         anime_id = item['anime']
         anime_obj = Anime.objects.get(anime_id=anime_id)
         
-        # Similares usando Euclidea
         similares_ids = topMatches(item_prefs, anime_id, n=3, similarity=sim_euclidean)
         
         similares_objs = []
@@ -79,7 +68,6 @@ def animes_populares(request):
         
     return render(request, 'animes_populares.html', {'resultados': resultados})
 
-# e) Recomendar Usuarios para un Anime
 def recomendar_usuarios(request):
     usuarios_recomendados = None
     anime_seleccionado = None
@@ -99,7 +87,6 @@ def recomendar_usuarios(request):
                 if not prefs:
                     return render(request, 'recomendar_usuarios.html', {'form': form, 'error': "Primero debes cargar el RecSys"})
 
-                # Obtenemos usuarios (prediccion, user_id)
                 recs = get_users_for_item(prefs, anime_id)
                 usuarios_recomendados = recs
                 
