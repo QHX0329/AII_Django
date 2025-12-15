@@ -1,1 +1,22 @@
-venv
+# --- Python & Django ---
+*.pyc
+__pycache__/
+db.sqlite3
+/venv
+venv/
+.env
+
+# --- Sistema Operativo ---
+.DS_Store
+Thumbs.db
+
+# --- Archivos generados por Shelve (Sist. Recomendación) ---
+# Usamos dataRS.* para no bloquear los .dat del dataset de música
+dataRS.*
+*.dir
+*.bak
+*.log
+
+# --- IDEs (Opcional pero recomendado para trabajar en equipo) ---
+.vscode/
+.idea/
