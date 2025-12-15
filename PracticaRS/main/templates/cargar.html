@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+    <h2>Cargar Base de Datos</h2>
+    
+    {% if mensaje %}
+        <div class="alert">
+            {{ mensaje }}
+        </div>
+    {% endif %}
+
+    <div style="background-color: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
+        <strong>¡Atención!</strong> Al confirmar, se borrarán todos los datos actuales y se recargarán desde los archivos CSV/TXT.
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" name="confirmar" value="Confirmar y Cargar BD" class="btn btn-danger">
+    </form>
+{% endblock %}

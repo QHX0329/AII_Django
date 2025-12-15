@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+    <h2>Cargar Sistema de Recomendación (RecSys)</h2>
+
+    <p>Este proceso generará las matrices de similitud necesarias para las recomendaciones. Puede tardar unos segundos.</p>
+
+    {% if mensaje %}
+        <div class="alert">
+            {{ mensaje }}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn">Generar Archivo de Recomendaciones</button>
+    </form>
+{% endblock %}

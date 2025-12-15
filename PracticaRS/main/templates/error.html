@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block contenido %}
+    <h2 style="color: red;">Error</h2>
+    <p>{{ mensaje }}</p>
+    <a href="{% url 'inicio' %}" class="btn">Volver al Inicio</a>
+{% endblock %}

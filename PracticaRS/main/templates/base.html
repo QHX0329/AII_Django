@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Recomendación Anime</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        header { background-color: #333; color: #fff; padding: 1rem; text-align: center; }
+        nav { background-color: #444; padding: 0.5rem; text-align: center; }
+        nav a { color: #fff; text-decoration: none; margin: 0 15px; font-weight: bold; }
+        nav a:hover { text-decoration: underline; color: #ffd700; }
+        .container { width: 80%; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .btn { background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; cursor: pointer; }
+        .btn-danger { background-color: #dc3545; }
+        .alert { padding: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; margin-bottom: 1rem; border-radius: 4px; }
+        form { margin-bottom: 20px; padding: 15px; background: #f9f9f9; border: 1px solid #ddd; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Práctica Grupal: Recomendador de Animes</h1>
+</header>
+
+<nav>
+    <a href="{% url 'inicio' %}">Inicio</a>
+    <a href="{% url 'cargar' %}">Cargar BD</a>
+    <a href="{% url 'loadRS' %}">Cargar RecSys</a>
+    <a href="{% url 'animes_formato' %}">Por Formato</a>
+    <a href="{% url 'populares' %}">Populares y Similares</a>
+    <a href="{% url 'recomendar_usuarios' %}">Recomendar Usuarios</a>
+</nav>
+
+<div class="container">
+    {% block contenido %}
+    {% endblock %}
+</div>
+
+</body>
+</html>

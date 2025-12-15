@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+    <h2>Animes Más Populares y Similares</h2>
+    <p>Top 3 animes con más puntuaciones y sus recomendaciones basadas en <strong>Distancia Euclidiana</strong>.</p>
+
+    {% if resultados %}
+        {% for item in resultados %}
+            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+                <h3 style="color: #0056b3; margin-top: 0;">
+                    #{{ forloop.counter }} - {{ item.anime.titulo }}
+                </h3>
+                <p><strong>Votos recibidos:</strong> {{ item.anime.num_votos }}</p>
+                
+                <h4 style="margin-bottom: 5px;">Animes Similares:</h4>
+                <ul>
+                    {% for similar, score in item.similares %}
+                        <li>
+                            <strong>{{ similar.titulo }}</strong> 
+                            <span style="color: #666; font-size: 0.9em;">(Similitud: {{ score|floatformat:4 }})</span>
+                        </li>
+                    {% empty %}
+                        <li>No se encontraron animes similares suficientes.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No hay datos disponibles o no se ha cargado el RecSys.</p>
+    {% endif %}
+{% endblock %}

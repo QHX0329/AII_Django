@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+    <h2>Recomendar Usuarios para un Anime</h2>
+    <p>Introduce el ID de un anime para encontrar usuarios potenciales a los que les gustaría.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ formulario.as_p }}
+        <button type="submit" class="btn">Buscar Usuarios</button>
+    </form>
+
+    {% if anime %}
+        <h3>Usuarios recomendados para: <em>{{ anime.titulo }}</em></h3>
+        
+        {% if recomendaciones %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ranking</th>
+                        <th>ID Usuario</th>
+                        <th>Puntuación Predicha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for score, id_usuario in recomendaciones %}
+                    <tr>
+                        <td>#{{ forloop.counter }}</td>
+                        <td>User {{ id_usuario }}</td>
+                        <td>{{ score|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No se encontraron recomendaciones para este anime.</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}
