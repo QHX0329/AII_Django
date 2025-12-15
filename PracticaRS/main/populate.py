@@ -4,11 +4,13 @@ import os
 from main.models import Anime, Puntuacion
 
 path = "data" 
+FICH_ANIME = "anime.csv"
+FICH_RATING = "ratings.csv"
 
 def populate_database():
     delete_tables()
-    populate_animes()
-    populate_ratings()
+    dict_animes = populate_animes()
+    populate_ratings(dict_animes)
     print("Base de datos cargada correctamente.")
 
 def delete_tables():
@@ -17,85 +19,107 @@ def delete_tables():
     print("Tablas borradas.")
 
 def populate_animes():
-    print("Cargando Animes...")
+    print("Eliminando datos anteriores de Animes y Puntuaciones...")
+    # Borramos en orden inverso para no romper claves foráneas
+    Puntuacion.objects.all().delete()
+    Anime.objects.all().delete()
+    
+    print("Cargando animes...")
     lista_animes = []
+    dict_animes = {} # Diccionario {id_original: objeto_anime}
     
-    # Verificar si el archivo existe
-    file_path = os.path.join(path, 'anime.csv')
-    if not os.path.exists(file_path):
-        print(f"ERROR: No se encuentra el archivo en {file_path}")
-        return
+    ruta_fichero = os.path.join(path, FICH_ANIME)
+    
+    if not os.path.exists(ruta_fichero):
+        print(f"ERROR: No se encuentra el archivo {ruta_fichero}")
+        return {}
 
-    # Usamos 'utf-8-sig' para gestionar caracteres BOM si el CSV viene de Excel
-    with open(file_path, 'r', encoding='utf-8-sig') as f:
-        reader = csv.DictReader(f, delimiter=';')
+    with open(ruta_fichero, encoding='utf-8', errors='ignore') as f:
+        # IMPORTANTE: Tus archivos usan ';' como separador
+        reader = csv.reader(f, delimiter=';') 
         
-        # DEBUG: Imprimir las columnas detectadas para ver si coinciden
-        print(f"Columnas detectadas en anime.csv: {reader.fieldnames}")
-
-        for i, row in enumerate(reader):
+        next(reader) # Saltamos la cabecera (anime_id;name;genre;type;episodes...)
+        
+        for row in reader:
+            # Si la línea está incompleta, la saltamos
+            if len(row) < 5: continue 
+            
             try:
-
-                episodes_str = row.get('episodes', '0')
-                episodes = int(episodes_str) if episodes_str.isdigit() else 0
+                aid = int(row[0])
+                titulo = row[1]
+                generos = row[2]
+                formato = row[3]
                 
-                anime = Anime(
-                    anime_id=int(row['anime_id']),
-                    titulo=row['name'],
-                    generos=row.get('genre', ''), # .get evita error si falta la columna
-                    formato_emision=row.get('type', ''),
-                    num_episodios=episodes
+                # Tratamiento de episodios "Unknown" o vacíos
+                episodios_str = row[4].strip()
+                if episodios_str.isdigit():
+                    episodios = int(episodios_str)
+                else:
+                    episodios = 0
+                
+                obj_anime = Anime(
+                    anime_id=aid,
+                    titulo=titulo,
+                    generos=generos,
+                    formato_emision=formato,
+                    num_episodios=episodios
                 )
-                lista_animes.append(anime)
-            except Exception as e:
-                # IMPRIMIR ERROR: Solo mostramos los primeros 5 errores para no saturar
-                if i < 5:
-                    print(f"Error en fila {i}: {e} | Datos: {row}")
-    
-    Anime.objects.bulk_create(lista_animes)
-    print(f"{len(lista_animes)} animes insertados.")
+                
+                lista_animes.append(obj_anime)
+                dict_animes[aid] = obj_anime
+            except ValueError:
+                # Si falla el parseo de algún ID, saltamos la línea
+                continue
 
-def populate_ratings():
-    print("Cargando Puntuaciones...")
-    lista_puntuaciones = []
-    valid_anime_ids = set(Anime.objects.values_list('anime_id', flat=True))
+    # Insertamos todos de golpe (Bulk Create)
+    Anime.objects.bulk_create(lista_animes)
+    print(f"Animes insertados: {len(lista_animes)}")
     
-    file_path = os.path.join(path, 'ratings.csv')
-    if not os.path.exists(file_path):
-        print(f"ERROR: No se encuentra el archivo en {file_path}")
+    return dict_animes
+
+def populate_ratings(dict_animes):
+    print("Cargando puntuaciones...")
+    lista_puntuaciones = []
+    
+    ruta_fichero = os.path.join(path, FICH_RATING)
+    
+    if not os.path.exists(ruta_fichero):
+        print(f"ERROR: No se encuentra el archivo {ruta_fichero}")
         return
 
-    with open(file_path, 'r', encoding='utf-8-sig') as f:
-        reader = csv.DictReader(f, delimiter=';')
+    with open(ruta_fichero, encoding='utf-8') as f:
+        reader = csv.reader(f, delimiter=';') 
+        next(reader) # Saltar cabecera (user_id;anime_id;rating)
+        
         count = 0
         for row in reader:
+            if len(row) < 3: continue
+            
             try:
-                aid = int(row['anime_id'])
-                rating = int(row['rating'])
+                uid = int(row[0])
+                aid = int(row[1])
+                rating = int(row[2])
+            except ValueError:
+                continue 
+            
+            # Solo cargamos si el rating es positivo y el anime existe
+            if rating > 0 and aid in dict_animes:
+                obj_puntuacion = Puntuacion(
+                    id_usuario=uid,
+                    anime=dict_animes[aid], # Enlazamos con el objeto en memoria
+                    puntuacion=rating
+                )
+                lista_puntuaciones.append(obj_puntuacion)
+                count += 1
                 
-                if aid in valid_anime_ids and rating > 0:
-                    puntuacion = Puntuacion(
-                        id_usuario=int(row['user_id']),
-                        anime_id=aid, # Asignamos el ID directamente, Django lo mapea si es ForeignKey
-                        puntuacion=rating
-                    )
-                    # Como Puntuacion.anime es ForeignKey, necesitamos pasar un objeto Anime o el ID a la columna correcta
-                    # En bulk_create con ForeignKey, es mejor usar la instancia o el campo _id
-                    puntuacion.anime_id = aid 
-                    
-                    lista_puntuaciones.append(puntuacion)
-                    count += 1
-            except Exception as e:
-                pass
-
-            # Optimización de memoria: guardar cada 10.000 registros
-            if len(lista_puntuaciones) >= 10000:
+            # Insertar en lotes de 50.000 para no saturar la memoria
+            if len(lista_puntuaciones) >= 50000:
                 Puntuacion.objects.bulk_create(lista_puntuaciones)
                 lista_puntuaciones = []
-                print(f"Procesados {count} ratings...")
+                print(f"Procesadas {count} puntuaciones...")
 
-    # Guardar los restantes
+    # Insertar los restantes
     if lista_puntuaciones:
         Puntuacion.objects.bulk_create(lista_puntuaciones)
     
-    print(f"Total: {Puntuacion.objects.count()} puntuaciones insertadas.")
+    print(f"Total Puntuaciones insertadas: {Puntuacion.objects.count()}")
