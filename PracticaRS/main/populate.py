@@ -36,11 +36,6 @@ def populate_animes():
         for i, row in enumerate(reader):
             try:
 
-                # Para que no cargue animes con el .hack u otros sin título válido
-                nombre = row['name']
-                if not nombre or not nombre[0].isalnum():
-                    continue
-
                 episodes_str = row.get('episodes', '0')
                 episodes = int(episodes_str) if episodes_str.isdigit() else 0
                 
