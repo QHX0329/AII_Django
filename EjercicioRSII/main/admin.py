@@ -1,3 +1,7 @@
 from django.contrib import admin
+from main.models import Tag, Artist, UserArtist, UserTagArtist
 
-# Register your models here.
+admin.site.register(Tag)
+admin.site.register(Artist)
+admin.site.register(UserArtist)
+admin.site.register(UserTagArtist)
