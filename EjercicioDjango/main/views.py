@@ -1,7 +1,7 @@
 #encoding:utf-8
 from main.models import Genero, Pelicula
 from main.forms import BusquedaPorFechaForm, BusquedaPorGeneroForm
-from main.populateDB import populateDB
+from main.populateDB import populateDB  
 from django.shortcuts import render, redirect
 
 #carga los datos desde la web en la BD
