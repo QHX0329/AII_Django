@@ -1,0 +1,25 @@
+{% extends 'master.html' %}
+
+{% block content %}
+<h2>Cargar Base de Datos</h2>
+
+{% if mensaje %}
+    <div class="uk-alert-success" uk-alert>
+        <a class="uk-alert-close" uk-close></a>
+        <p>{{ mensaje }}</p>
+    </div>
+    <p>Ahora puedes cargar el modelo de recomendación o realizar consultas.</p>
+    <a href="/loadRS" class="uk-button uk-button-secondary">Cargar Modelo RS</a>
+{% else %}
+    <div class="uk-alert-warning" uk-alert>
+        <p>Atención: Esta acción borrará todos los datos actuales de la base de datos y cargará los ficheros CSV.</p>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="confirmar" class="uk-button uk-button-danger uk-button-large">
+            Confirmar y Cargar BD
+        </button>
+    </form>
+{% endif %}
+{% endblock %}

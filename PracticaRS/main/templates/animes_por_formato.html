@@ -1,0 +1,46 @@
+{% extends 'master.html' %}
+
+{% block content %}
+<h2>Animes por Formato de Emisión</h2>
+
+<div class="uk-card uk-card-default uk-card-body uk-margin-bottom">
+    <form method="post" class="uk-form-horizontal">
+        {% csrf_token %}
+        <div class="uk-margin">
+            <label class="uk-form-label">{{ form.formato.label }}</label>
+            <div class="uk-form-controls">
+                {{ form.formato }} 
+                </div>
+        </div>
+        <button type="submit" class="uk-button uk-button-primary">Buscar</button>
+    </form>
+</div>
+
+{% if animes %}
+    <h3>Resultados: <span class="uk-badge">{{ animes|length }}</span> animes encontrados</h3>
+    <table class="uk-table uk-table-striped uk-table-hover uk-table-small">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Géneros</th>
+                <th>Formato</th>
+                <th>Episodios</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for anime in animes %}
+            <tr>
+                <td>{{ anime.titulo }}</td>
+                <td>{{ anime.generos }}</td>
+                <td><span class="uk-label">{{ anime.formato_emision }}</span></td>
+                <td>{{ anime.num_episodios }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% elif animes is not None %}
+    <div class="uk-alert-warning" uk-alert>
+        <p>No se encontraron animes con ese formato.</p>
+    </div>
+{% endif %}
+{% endblock %}

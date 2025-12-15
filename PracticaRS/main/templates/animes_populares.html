@@ -1,0 +1,43 @@
+{% extends 'master.html' %}
+
+{% block content %}
+<h2>Animes más Populares y Similares (Distancia Euclídea)</h2>
+
+{% if resultados %}
+    <div class="uk-grid-match uk-child-width-1-3@m" uk-grid>
+        {% for res in resultados %}
+        <div>
+            <div class="uk-card uk-card-default uk-card-hover">
+                <div class="uk-card-header">
+                    <h3 class="uk-card-title uk-text-truncate" title="{{ res.anime.titulo }}">
+                        {{ res.anime.titulo }}
+                    </h3>
+                    <p class="uk-text-meta">{{ res.votos }} puntuaciones recibidas</p>
+                </div>
+                <div class="uk-card-body">
+                    <h4 class="uk-heading-bullet">Similares:</h4>
+                    <ul class="uk-list uk-list-divider">
+                        {% for sim in res.similares %}
+                        <li>
+                            <div class="uk-flex uk-flex-between">
+                                <span class="uk-text-truncate" style="max-width: 70%;" title="{{ sim.titulo }}">
+                                    {{ sim.titulo }}
+                                </span>
+                                <span class="uk-label uk-label-success">{{ sim.similitud|floatformat:4 }}</span>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li>No hay suficientes datos para similitudes.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="uk-alert-danger" uk-alert>
+        <p>No hay datos. Asegúrate de haber cargado la BD y el sistema RS.</p>
+    </div>
+{% endif %}
+{% endblock %}

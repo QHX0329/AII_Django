@@ -1,0 +1,61 @@
+{% extends 'master.html' %}
+
+{% block content %}
+<h2>Recomendar Usuarios para un Anime</h2>
+<p>Introduce el ID de un anime para encontrar usuarios que probablemente le darían una alta puntuación.</p>
+
+<div class="uk-card uk-card-default uk-card-body uk-margin-bottom">
+    <form method="post" class="uk-form-horizontal">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+            <div class="uk-alert-danger" uk-alert>
+                {{ form.errors }}
+            </div>
+        {% endif %}
+        
+        {% if error %}
+            <div class="uk-alert-danger" uk-alert>
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+
+        <div class="uk-margin">
+            <label class="uk-form-label">{{ form.anime_id.label }}</label>
+            <div class="uk-form-controls">
+                {{ form.anime_id }}
+            </div>
+        </div>
+        <button type="submit" class="uk-button uk-button-danger">Buscar Usuarios</button>
+    </form>
+</div>
+
+{% if usuarios %}
+    <h3>Anime seleccionado: <span class="uk-text-primary">{{ anime.titulo }}</span></h3>
+    <table class="uk-table uk-table-middle uk-table-divider uk-width-1-2@m">
+        <thead>
+            <tr>
+                <th class="uk-width-small">ID Usuario</th>
+                <th>Puntuación Predicha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for score, user_id in usuarios %}
+            <tr>
+                <td><strong>User {{ user_id }}</strong></td>
+                <td>
+                    <div class="uk-grid-small uk-flex-middle" uk-grid>
+                        <div class="uk-width-expand">
+                            <progress class="uk-progress" value="{{ score }}" max="10" style="margin-bottom: 0;"></progress>
+                        </div>
+                        <div class="uk-width-auto">
+                            {{ score|floatformat:2 }}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}
